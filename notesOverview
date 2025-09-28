@@ -1,0 +1,12 @@
+Buffers: is a temporary space that store data in the memory when transferring data from a source to a destination
+
+gcc and clang are c compilers 
+
+main() is a special function  it is the default starting point
+
+"cc file.c -o file " is how you compile a file then run the ./file to run the program 
+
+"make" is a program helps running  our program by automaticall compiling the files we need by addinga  script of how we would like
+to compile it 
+
+echo $? is how we see the output of the comiled program after running it 
