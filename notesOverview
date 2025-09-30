@@ -6,7 +6,48 @@ main() is a special function  it is the default starting point
 
 "cc file.c -o file " is how you compile a file then run the ./file to run the program 
 
-"make" is a program helps running  our program by automaticall compiling the files we need by addinga  script of how we would like
+"make" is a program helps running  our program by automatically compiling the files we need by addinga  script of how we would like
 to compile it 
 
 echo $? is how we see the output of the comiled program after running it 
+
+STDIN_FILENO: Standard input  which is a lower level in C, its value always 0
+STDOUT_FILENO: Standard output 
+STDERR_FILENO: Standard error 
+
+these are lower level integer handles the operating system uses to identify open files and streams 
+
+read(STDIN_FILENO, buffer, size)
+NOTE: for the "size" it is the size of the buffer which we make it minus 1 for the null terminator "\0" to allow it to terminate  
+
+we turned off echoing by  creating function called enableRawMode
+
+a struct in C is similiar to JSON object we structure variables  with corresponding values inside it instead
+
+tcgetattr() and tcsetattr() are functions  from #include<termios.h> 
+ECHO is a bitflag e.g: "000000011100000"
+"~" is a bit NOT operator that flips the bitflags from the e.g above to the opposite value "1111111...."
+ 
+
+when we enableRawMode the terminal stay in this mode even after the program terminated then we have to reset it in the shell using the "reset" 
+
+then we create disableRawmode() to prevent our shell from getting stuck 
+
+turning off canonical mode using the ICANON flag allows us to read the input stream bit by bit instead of line by line reading 
+which is proven by pressing "q" it exits automatically instead of pressing return key (ENTER KEY) for it to read it like before  
+
+ISIG IXON IEXTEN ICRNL OPOST are different flags that are used like e.g :  
+
+    struct termios raw = orig_termios;
+    raw.c_iflag &= ~(ICRNL | IXON | INPCK | ISTRIP | BRKINT);
+    raw.c_oflag &= ~(OPOST);
+    raw.c_cflag |= ~(CS8);
+    raw.c_lflag &= ~(ECHO | ICANON | IEXTEN | ISIG); 
+    raw.c_cc[VMIN] = 0;
+    raw.c_cc[VTIME] = 1;
+
+in order to return to a new line and start from the beginning of the line flexibly We will turn off all output processing 
+features by turning off the OPOST flag this will disable the automatic return to a new line and starting from the beginning of the line carriages
+From now on, we’ll have to write out the full "\r\n" whenever we want to start a new line.
+
+
