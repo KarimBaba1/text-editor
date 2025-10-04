@@ -10,33 +10,35 @@
 #include <unistd.h>
 
 /*** defines ***/
+
 #define KILO_VERSION "0.0.1"
 
-#define CTRL_KEY(k)  ((k) & 0x1f)
+#define CTRL_KEY(k) ((k) & 0x1f)
 
 /*** data ***/
 
 struct editorConfig {
-    int cx, cy;
-    int screenrows;
-    int screencols;
-    struct termios orig_termios;
+  int cx, cy;
+  int screenrows;
+  int screencols;
+  struct termios orig_termios;
 };
 
 struct editorConfig E;
 
 /*** terminal ***/
 
-void die (const char *s){
-    write(STDOUT_FILENO, "\x1b[2J", 4);
-    write(STDOUT_FILENO, "\x1b[2H", 3);
-    perror(s);
-    exit(1);
+void die(const char *s) {
+  write(STDOUT_FILENO, "\x1b[2J", 4);
+  write(STDOUT_FILENO, "\x1b[H", 3);
+
+  perror(s);
+  exit(1);
 }
 
 void disableRawMode(){
-    if(tcsetattr(STDIN_FILENO, TCSAFLUSH, &E.orig_termios) == -1)
-        die("tcsetattr");
+  if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &E.orig_termios) == -1)
+    die("tcsetattr");
 }
 
 void enableRawMode(){
@@ -127,7 +129,7 @@ void editorDrawRows(struct abuf *ab){
     for(y=0; y<E.screenrows; y++){
         if(y == E.screenrows / 3){
             char welcome[80];
-            int welcomelen = snprintf(welcome, sizeof(welcome), "Kilo editor -- version %s", KILO_VERSION);
+            int welcomelen = snprintf(welcome, sizeof(welcome), "Karim editor -- version %s", KILO_VERSION);
             if (welcomelen > E.screencols) welcomelen = E.screencols;
             int padding = (E.screencols - welcomelen) / 2;
             if(padding){
@@ -157,7 +159,7 @@ void editorRefreshScreen(){
     editorDrawRows(&ab);
 
 char buf[32];
-    snprintf(buf, sizeof(buf), "\x1b[%d:%dH", E.cy + 1, E.cx + 1);
+    snprintf(buf, sizeof(buf), "\x1b[%d;%dH", E.cy + 1, E.cx + 1);
     abAppend(&ab, buf, strlen(buf));
 
     abAppend(&ab, "\x1b[?25h", 6);
